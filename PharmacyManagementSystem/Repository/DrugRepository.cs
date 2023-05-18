@@ -102,5 +102,10 @@ namespace PharmacyManagementSystem.Repository
 
             return true;
         }
+
+        public bool DrugExists(int id)
+        {
+            return (_context.Drug?.Any(e => e.drug_id == id)).GetValueOrDefault();
+        }
     }
 }

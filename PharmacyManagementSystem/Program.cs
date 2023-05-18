@@ -15,7 +15,7 @@ builder.Services.AddDbContext<PharmacyManagementSystemContext>(options =>
 // adding scopes
 builder.Services.AddScoped<IUser, UserRepository>();
 builder.Services.AddScoped<IDrug, DrugRepository>();
-
+builder.Services.AddScoped<ISupplier, SupplierRepository>();
 // adding auth in swagger
 builder.Services.AddSwaggerGen(options =>
 {
@@ -28,6 +28,8 @@ builder.Services.AddSwaggerGen(options =>
     });
     options.OperationFilter<SecurityRequirementsOperationFilter>();
 });
+
+
 
 
 // Adding Authentication
@@ -74,7 +76,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
-
+// cors error
+app.UseCors(policy => policy.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
 app.MapControllers();
-
 app.Run();

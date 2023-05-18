@@ -19,7 +19,9 @@ namespace PharmacyManagementSystem.Controllers
 
         // GET: api/Drugs
         // Access : Doctor , Admin 
-        [HttpGet, Authorize(Roles = "Admin,Doctor")]
+        [HttpGet
+            //, Authorize(Roles = "Admin,Doctor")
+            ]
         public async Task<ActionResult<IEnumerable<Drug>>> GetDrug()
         {
             var drug = await IDrug.GetDrug();
@@ -32,7 +34,9 @@ namespace PharmacyManagementSystem.Controllers
 
         // GET: api/Drugs/5
         // Access : Doctor , Admin 
-        [HttpGet("{id}"), Authorize(Roles = "Admin,Doctor")]
+        [HttpGet("{id}")
+            //, Authorize(Roles = "Admin,Doctor")
+            ]
         public async Task<ActionResult<Drug>> GetDrug(int id)
         {
             var drug = await IDrug.GetDrugById(id);
@@ -45,7 +49,9 @@ namespace PharmacyManagementSystem.Controllers
 
         // PUT: api/Drugs/5
         // Access : Admin 
-        [HttpPut("{id}"), Authorize(Roles = "Admin")]
+        [HttpPut("{id}")
+            //, Authorize(Roles = "Admin")
+            ]
         public async Task<IActionResult> PutDrug(int id, Drug drug)
         {
             if (id != drug.drug_id)
@@ -64,7 +70,9 @@ namespace PharmacyManagementSystem.Controllers
 
         // POST: api/Drugs
         // Access : Admin 
-        [HttpPost, Authorize(Roles = "Admin")]
+        [HttpPost
+            //, Authorize(Roles = "Admin")
+            ]
         public async Task<ActionResult<Drug>> PostDrug(CreateDrugDto drug)
         {
 
@@ -97,7 +105,9 @@ namespace PharmacyManagementSystem.Controllers
         }
 
 
-        [HttpGet("GetDrugBySupplierId/{supplierId}")]
+        [HttpGet("GetDrugBySupplierId/{supplierId}")
+            //, Authorize(Roles = "Admin")
+            ]
         public async Task<ActionResult<IEnumerable<Drug>>> GetDrugBySupplierId(int supplierId)
         {
             return await IDrug.GetDrugBySupplierId(supplierId);

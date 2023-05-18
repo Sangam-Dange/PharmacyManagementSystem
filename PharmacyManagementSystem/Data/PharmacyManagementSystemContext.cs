@@ -9,10 +9,6 @@ namespace PharmacyManagementSystem.Data
         {
         }
 
-        protected override void OnModelCreating(ModelBuilder builder)
-        {
-            base.OnModelCreating(builder);
-        }
 
         public DbSet<PharmacyManagementSystem.Models.User> User { get; set; } = default!;
 

@@ -12,5 +12,6 @@ namespace PharmacyManagementSystem.Interface
         Task<Drug> PostDrug(CreateDrugDto drug);
         Task<ActionResult<IEnumerable<Drug>>> GetDrugBySupplierId(int supplierId);
         Task<bool> DeleteDrugById(int id);
+        bool DrugExists(int id);
     }
 }

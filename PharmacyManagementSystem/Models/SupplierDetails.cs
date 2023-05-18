@@ -16,7 +16,7 @@ namespace PharmacyManagementSystem.Models
         public string supplier_email { get; set; }
 
 
-        [Required(ErrorMessage = "Please enter supplier address"), MinLength(3), MaxLength(50)]
+        [Required(ErrorMessage = "Please enter supplier address"), MinLength(3), MaxLength(250)]
         public string supplier_address { get; set; }
 
 
@@ -27,6 +27,6 @@ namespace PharmacyManagementSystem.Models
         public string supplier_phone { get; set; }
 
         [JsonIgnore]
-        public IEnumerable<Drug> drug { get; set; }
+        public IEnumerable<Drug>? drug { get; set; }
     }
 }

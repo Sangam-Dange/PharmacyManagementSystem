@@ -7,7 +7,8 @@ namespace PharmacyManagementSystem.Models
     public class User
     {
         [Key]
-        [DatabaseGeneratedAttribute(DatabaseGeneratedOption.Identity)]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+
         public int Id { get; set; }
 
         //-----------------------------------------------------------------
@@ -44,6 +45,7 @@ namespace PharmacyManagementSystem.Models
         public string requestedFor { get; set; } = string.Empty;
         public bool? isAdmin { get; set; } = null;
         public bool isSuperAdmin { get; set; } = false;
+        [JsonIgnore]
         public List<Order> Orders { get; set; }
         public User() { }
 

@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using PharmacyManagementSystem.Controllers.Dtos.OrderDtos;
-using PharmacyManagementSystem.Data;
+using PharmacyManagementSystem.Interface;
 using PharmacyManagementSystem.Models;
 
 namespace PharmacyManagementSystem.Controllers
@@ -10,121 +10,77 @@ namespace PharmacyManagementSystem.Controllers
     [ApiController]
     public class OrdersController : ControllerBase
     {
-        private readonly PharmacyManagementSystemContext _context;
+        private readonly IOrder IOrder;
 
-        public OrdersController(PharmacyManagementSystemContext context)
+        public OrdersController(IOrder IOrder)
         {
-            _context = context;
+            this.IOrder = IOrder;
         }
 
         // GET: api/Orders
-        [HttpGet]
+        [HttpGet, Authorize(Roles = "Admin,Doctor")]
         public async Task<ActionResult<IEnumerable<Order>>> GetOrder()
         {
-            if (_context.Order == null)
-            {
-                return NotFound();
-            }
-            return await _context.Order.ToListAsync();
+
+            return await IOrder.GetOrder();
         }
 
         // GET: api/Orders/5
-        [HttpGet("{id}")]
+        [HttpGet("{id}"), Authorize(Roles = "Admin,Doctor")]
         public async Task<ActionResult<Order>> GetOrder(int id)
         {
-            if (_context.Order == null)
-            {
-                return NotFound();
-            }
-            var order = await _context.Order.FindAsync(id);
-
-            if (order == null)
-            {
-                return NotFound();
-            }
-
-            return order;
+            return await IOrder.GetOrder(id);
         }
 
+        // GET: api/Orders/5
+        [HttpGet("GetOrderByUserId/{userId}"), Authorize(Roles = "Doctor")]
+        public async Task<ActionResult<IEnumerable<Order>>> GetOrderByUserId(int userId)
+        {
+            return await IOrder.GetOrderByUserId(userId);
+        }
         // PUT: api/Orders/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
+        [HttpPut("{id}"), Authorize(Roles = "Doctor")]
         public async Task<IActionResult> PutOrder(int id, Order order)
         {
             if (id != order.order_id)
             {
                 return BadRequest();
             }
-
-            _context.Entry(order).State = EntityState.Modified;
-
-            try
+            bool check = await IOrder.PutOrder(id, order);
+            if (check)
             {
-                await _context.SaveChangesAsync();
+                return Ok();
             }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!OrderExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
+            return BadRequest();
         }
 
         // POST: api/Orders
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
+        [HttpPost, Authorize(Roles = "Doctor")]
         public async Task<ActionResult<Order>> PostOrder(CreateOrderDto request)
         {
-            if (_context.Order == null)
+            Order newOrder = await IOrder.PostOrder(request);
+            if (newOrder != null)
             {
-                return Problem("Entity set 'PharmacyManagementSystemContext.Order'  is null.");
+
+                return CreatedAtAction("GetOrder", new { id = newOrder.order_id }, newOrder);
             }
-
-            Random rnd = new Random();
-            int num = rnd.Next();
-            var newOrder = new Order
-            {
-                order_no = num,
-                total = request.total,
-                UserId = request.UserId,
-                pickup_date = request.pickup_date,
-            };
-            _context.Order.Add(newOrder);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetOrder", new { id = newOrder.order_id }, newOrder);
+            return BadRequest();
         }
 
         // DELETE: api/Orders/5
-        [HttpDelete("{id}")]
+        [HttpDelete("{id}"), Authorize(Roles = "Doctor")]
         public async Task<IActionResult> DeleteOrder(int id)
         {
-            if (_context.Order == null)
+            bool check = await IOrder.DeleteOrder(id);
+            if (check)
             {
-                return NotFound();
+                return Ok();
             }
-            var order = await _context.Order.FindAsync(id);
-            if (order == null)
-            {
-                return NotFound();
-            }
-
-            _context.Order.Remove(order);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            return BadRequest();
         }
 
-        private bool OrderExists(int id)
-        {
-            return (_context.Order?.Any(e => e.order_id == id)).GetValueOrDefault();
-        }
+
     }
 }

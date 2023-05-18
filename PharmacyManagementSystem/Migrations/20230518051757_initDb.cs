@@ -5,26 +5,24 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace PharmacyManagementSystem.Migrations
 {
-    public partial class initCreate : Migration
+    public partial class initDb : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Drug",
+                name: "SupplierDetail",
                 columns: table => new
                 {
-                    drug_id = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    drug_name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    batch_id = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
-                    quantity = table.Column<int>(type: "int", nullable: false),
-                    expiry_date = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    supplier_email = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    supplier_name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    supplier_email = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    supplier_address = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false),
+                    supplier_phone = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Drug", x => x.drug_id);
+                    table.PrimaryKey("PK_SupplierDetail", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -38,11 +36,37 @@ namespace PharmacyManagementSystem.Migrations
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     PasswordHash = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
                     PasswordSalt = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
-                    Role = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    requestedFor = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    isAdmin = table.Column<bool>(type: "bit", nullable: true),
+                    isSuperAdmin = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_User", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Drug",
+                columns: table => new
+                {
+                    drug_id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    drug_name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    batch_id = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
+                    quantity = table.Column<int>(type: "int", nullable: false),
+                    expiry_date = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    SupplierDetailId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Drug", x => x.drug_id);
+                    table.ForeignKey(
+                        name: "FK_Drug_SupplierDetail_SupplierDetailId",
+                        column: x => x.SupplierDetailId,
+                        principalTable: "SupplierDetail",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -95,6 +119,33 @@ namespace PharmacyManagementSystem.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Sale",
+                columns: table => new
+                {
+                    sales_id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    OrderId = table.Column<int>(type: "int", nullable: false),
+                    date_time = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    paid_amount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    balance = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Sale", x => x.sales_id);
+                    table.ForeignKey(
+                        name: "FK_Sale_Order_OrderId",
+                        column: x => x.OrderId,
+                        principalTable: "Order",
+                        principalColumn: "order_id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Drug_SupplierDetailId",
+                table: "Drug",
+                column: "SupplierDetailId");
+
             migrationBuilder.CreateIndex(
                 name: "IX_Order_UserId",
                 table: "Order",
@@ -109,6 +160,11 @@ namespace PharmacyManagementSystem.Migrations
                 name: "IX_OrderDetail_OrderId",
                 table: "OrderDetail",
                 column: "OrderId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Sale_OrderId",
+                table: "Sale",
+                column: "OrderId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -117,10 +173,16 @@ namespace PharmacyManagementSystem.Migrations
                 name: "OrderDetail");
 
             migrationBuilder.DropTable(
+                name: "Sale");
+
+            migrationBuilder.DropTable(
                 name: "Drug");
 
             migrationBuilder.DropTable(
                 name: "Order");
+
+            migrationBuilder.DropTable(
+                name: "SupplierDetail");
 
             migrationBuilder.DropTable(
                 name: "User");

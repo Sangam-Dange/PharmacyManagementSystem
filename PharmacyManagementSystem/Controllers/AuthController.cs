@@ -25,17 +25,13 @@ namespace PharmacyManagementSystem.Controllers
 
 
 
-
-
-        public static User user = new User();
-
         [HttpPost("register")]
         public async Task<ActionResult<User>> Register(RegisterUserDto request)
         {
 
             CreatePasswordHash(request.Password, out byte[] passwordHash, out byte[] passwordSalt);
 
-
+            User user = new User();
             user.Name = request.Name;
             user.Email = request.Email;
             user.Contact = request.Contact;
@@ -47,6 +43,7 @@ namespace PharmacyManagementSystem.Controllers
             {
                 return Problem("Entity set 'PharmacyManagementSystemContext.User'  is null.");
             }
+
             _context.User.Add(user);
             await _context.SaveChangesAsync();
 

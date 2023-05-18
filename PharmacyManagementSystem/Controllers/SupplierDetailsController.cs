@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using PharmacyManagementSystem.Controllers.Dtos.SupplierDtos;
-using PharmacyManagementSystem.Data;
+using PharmacyManagementSystem.Interface;
 using PharmacyManagementSystem.Models;
 
 namespace PharmacyManagementSystem.Controllers
@@ -10,118 +9,86 @@ namespace PharmacyManagementSystem.Controllers
     [ApiController]
     public class SupplierDetailsController : ControllerBase
     {
-        private readonly PharmacyManagementSystemContext _context;
+        private readonly ISupplier ISupplier;
 
-        public SupplierDetailsController(PharmacyManagementSystemContext context)
+        public SupplierDetailsController(ISupplier ISupplier)
         {
-            _context = context;
+            this.ISupplier = ISupplier;
         }
 
+
+
         // GET: api/SupplierDetails
-        [HttpGet]
+        [HttpGet
+            //, Authorize(Roles = "Admin")
+            ]
         public async Task<ActionResult<IEnumerable<SupplierDetails>>> GetSupplierDetail()
         {
-            if (_context.SupplierDetail == null)
-            {
-                return NotFound();
-            }
-            return await _context.SupplierDetail.ToListAsync();
+            return await ISupplier.GetSupplierDetail();
         }
 
         // GET: api/SupplierDetails/5
-        [HttpGet("{id}")]
+        [HttpGet("{id}")
+            //,Authorize(Roles = "Admin")
+            ]
         public async Task<ActionResult<SupplierDetails>> GetSupplierDetails(int id)
         {
-            if (_context.SupplierDetail == null)
-            {
-                return NotFound();
-            }
-            var supplierDetails = await _context.SupplierDetail.FindAsync(id);
 
-            if (supplierDetails == null)
-            {
-                return NotFound();
-            }
-
-            return supplierDetails;
+            return await ISupplier.GetSupplierDetailById(id);
         }
 
         // PUT: api/SupplierDetails/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutSupplierDetails(int id, SupplierDetails supplierDetails)
+        [HttpPut("{id}")
+            //, Authorize(Roles = "Admin")
+            ]
+        public async Task<IActionResult> PutSupplierDetails(int id, AddSupplierDto supplier)
         {
-            if (id != supplierDetails.Id)
+
+            var updatedSp = await ISupplier.PutSupplierDetails(id, supplier);
+
+            if (updatedSp != null)
             {
-                return BadRequest();
+                return Ok(updatedSp);
             }
 
-            _context.Entry(supplierDetails).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!SupplierDetailsExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
+            return BadRequest();
         }
 
         // POST: api/SupplierDetails
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<SupplierDetails>> PostSupplierDetails(AddSupplier supplier)
+        [HttpPost
+            //, Authorize(Roles = "Admin")
+            ]
+        public async Task<ActionResult<SupplierDetails>> PostSupplierDetails(AddSupplierDto supplier)
         {
-            if (_context.SupplierDetail == null)
+            SupplierDetails newSupplier = await ISupplier.PostSupplierDetails(supplier);
+
+            if (newSupplier != null)
             {
-                return Problem("Entity set 'PharmacyManagementSystemContext.SupplierDetail'  is null.");
+                return CreatedAtAction("GetSupplierDetails", new { id = newSupplier.Id }, newSupplier);
             }
 
-            SupplierDetails newSupplier = new SupplierDetails();
-            newSupplier.supplier_address = supplier.supplier_address;
-            newSupplier.supplier_name = supplier.supplier_name;
-            newSupplier.supplier_phone = supplier.supplier_phone;
-            newSupplier.supplier_email = supplier.supplier_email;
+            return BadRequest();
 
-            _context.SupplierDetail.Add(newSupplier);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetSupplierDetails", new { id = newSupplier.Id }, newSupplier);
         }
 
         // DELETE: api/SupplierDetails/5
-        [HttpDelete("{id}")]
+        [HttpDelete("{id}")
+            //, Authorize(Roles = "Admin")
+            ]
         public async Task<IActionResult> DeleteSupplierDetails(int id)
         {
-            if (_context.SupplierDetail == null)
+            bool check = await ISupplier.DeleteSupplierDetails(id);
+
+            if (check)
             {
-                return NotFound();
-            }
-            var supplierDetails = await _context.SupplierDetail.FindAsync(id);
-            if (supplierDetails == null)
-            {
-                return NotFound();
+                return Ok();
             }
 
-            _context.SupplierDetail.Remove(supplierDetails);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            return BadRequest();
         }
 
-        private bool SupplierDetailsExists(int id)
-        {
-            return (_context.SupplierDetail?.Any(e => e.Id == id)).GetValueOrDefault();
-        }
+
     }
 }

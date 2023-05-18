@@ -21,7 +21,7 @@ namespace PharmacyManagementSystem.Controllers
 
         // GET: api/Users
         // Access : SuperAdmin
-        [HttpGet]
+        [HttpGet, Authorize(Roles = "SuperAdmin")]
 
 
         public async Task<ActionResult<IEnumerable<User>>> GetUsers()

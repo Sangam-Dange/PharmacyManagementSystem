@@ -1,6 +1,6 @@
 ﻿namespace PharmacyManagementSystem.Controllers.Dtos.SupplierDtos
 {
-    public class AddSupplier
+    public class AddSupplierDto
     {
         public string supplier_name { get; set; }
 
@@ -13,5 +13,6 @@
 
 
         public string supplier_phone { get; set; }
+
     }
 }

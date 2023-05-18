@@ -12,8 +12,8 @@ using PharmacyManagementSystem.Data;
 namespace PharmacyManagementSystem.Migrations
 {
     [DbContext(typeof(PharmacyManagementSystemContext))]
-    [Migration("20230509173227_added identity generator on user id")]
-    partial class addedidentitygeneratoronuserid
+    [Migration("20230518051757_initDb")]
+    partial class initDb
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -154,8 +154,8 @@ namespace PharmacyManagementSystem.Migrations
 
                     b.Property<string>("supplier_address")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
 
                     b.Property<string>("supplier_email")
                         .IsRequired()

@@ -1,5 +1,5 @@
-﻿using Newtonsoft.Json;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace PharmacyManagementSystem.Models
 {
@@ -17,14 +17,14 @@ namespace PharmacyManagementSystem.Models
         public decimal total { get; set; }
 
         //-----------------------------------------------------------------
-        [JsonIgnore]
+
         public User user { get; set; }
         public int UserId { get; set; }
 
 
         //-----------------------------------------------------------------
         public DateTime pickup_date { get; set; }
-
+        [JsonIgnore]
         public List<OrderDetail> OrderDetails { get; set; }
 
 
