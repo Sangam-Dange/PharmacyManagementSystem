@@ -4,12 +4,31 @@ using Microsoft.IdentityModel.Tokens;
 using PharmacyManagementSystem.Authentication;
 using PharmacyManagementSystem.Data;
 using PharmacyManagementSystem.Models;
+using System.Data;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net;
 using System.Security.Claims;
 using System.Security.Cryptography;
+using System.Text;
 
 namespace PharmacyManagementSystem.Controllers
 {
+    public class Response
+    {
+        public string message { get; set; }
+        public bool success { get; set; }
+        public HttpStatusCode code { get; set; }
+        public string token { get; set; }
+        public User payload { get; set; }
+        public Response() { }
+    }
+
+    public class Token
+    {
+        public string token { get; set; } = string.Empty;
+    }
+
+
     [Route("api/[controller]")]
     [ApiController]
     public class AuthController : ControllerBase
@@ -25,9 +44,17 @@ namespace PharmacyManagementSystem.Controllers
 
 
 
+
         [HttpPost("register")]
         public async Task<ActionResult<User>> Register(RegisterUserDto request)
         {
+            User checkEmailExist = await _context.User.Where(x => x.Email == request.Email).FirstOrDefaultAsync();
+
+            if (checkEmailExist != null)
+            {
+                //throw new Exception("Email already exist");
+                return StatusCode(409, value: "Email is already taken");
+            }
 
             CreatePasswordHash(request.Password, out byte[] passwordHash, out byte[] passwordSalt);
 
@@ -62,13 +89,13 @@ namespace PharmacyManagementSystem.Controllers
 
             if (!VerifyPassword(request.Password, user.PasswordHash, user.PasswordSalt))
             {
-                return BadRequest("Invalid credentials.");
+                return BadRequest("Invalid Credentials.");
 
             }
 
             string token = CreateToken(user);
 
-            return Ok(token);
+            return Ok(new Response { token = token, code = HttpStatusCode.OK, message = "User loged in successfully", success = true, payload = user });
         }
 
         private string CreateToken(User user)
@@ -89,12 +116,13 @@ namespace PharmacyManagementSystem.Controllers
             }
             List<Claim> claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Name,user.Name),
+
+                new Claim(ClaimTypes.Email,user.Email),
                 new Claim(ClaimTypes.Role,check)
             };
 
-            var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(_configuration.GetSection("JWT:Key").Value));
-            Console.WriteLine(key);
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.GetSection("JWT:Key").Value));
+
             var cred = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
             var token = new JwtSecurityToken(
                 claims: claims,
@@ -111,7 +139,7 @@ namespace PharmacyManagementSystem.Controllers
             using (var hmac = new HMACSHA512())
             {
                 passwordSalt = hmac.Key;
-                passwordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
+                passwordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
             }
         }
 
@@ -119,9 +147,42 @@ namespace PharmacyManagementSystem.Controllers
         {
             using (var hmac = new HMACSHA512(passwordSalt))
             {
-                var computedHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
+                var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
                 return computedHash.SequenceEqual(passwordHash);
             }
+        }
+
+        [HttpGet("getUserByToken")]
+
+        public async Task<ActionResult<User>> GetUserByToken()
+        {
+            try
+            {
+                var handler = new JwtSecurityTokenHandler();
+                string authHeader = Request.Headers["Authorization"];
+                if (authHeader == null)
+                {
+                    return StatusCode(401, "Unauthorizes User");
+                }
+                authHeader = authHeader.Replace("Bearer ", "");
+                var jsonToken = handler.ReadToken(authHeader);
+                var tokenS = handler.ReadToken(authHeader) as JwtSecurityToken;
+                var email = tokenS.Claims.Where(x => x.Type == ClaimTypes.Email).FirstOrDefault().Value;
+
+                User user = await _context.User.Where(x => x.Email == email).FirstOrDefaultAsync();
+                if (user == null)
+                {
+                    return NotFound();
+                }
+
+                return user;
+            }
+            catch (Exception ex)
+            {
+                //TODO: Logger.Error
+                throw new Exception(ex.Message);
+            }
+
         }
 
 

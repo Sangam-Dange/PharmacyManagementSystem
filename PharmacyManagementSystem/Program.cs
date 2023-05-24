@@ -16,6 +16,7 @@ builder.Services.AddDbContext<PharmacyManagementSystemContext>(options =>
 builder.Services.AddScoped<IUser, UserRepository>();
 builder.Services.AddScoped<IDrug, DrugRepository>();
 builder.Services.AddScoped<ISupplier, SupplierRepository>();
+
 // adding auth in swagger
 builder.Services.AddSwaggerGen(options =>
 {
@@ -50,8 +51,9 @@ builder.Services.AddAuthentication(options =>
         ValidateIssuerSigningKey = true,
         ValidateIssuer = false,
         ValidateAudience = false,
-        ValidAudience = builder.Configuration["JWT:ValidAudience"],
-        ValidIssuer = builder.Configuration["JWT:ValidIssuer"],
+        ValidateLifetime = false,
+        ValidAudience = "User",
+        ValidIssuer = "User",
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration.GetSection("JWT:Key").Value))
     };
 });

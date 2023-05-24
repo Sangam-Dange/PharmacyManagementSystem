@@ -29,7 +29,7 @@ namespace PharmacyManagementSystem.Controllers
             {
                 return NotFound();
             }
-            return Ok(drug);
+            return drug;
         }
 
         // GET: api/Drugs/5
