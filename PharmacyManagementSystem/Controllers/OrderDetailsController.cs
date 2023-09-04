@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PharmacyManagementSystem.Data;
 using PharmacyManagementSystem.Models;
@@ -25,29 +20,45 @@ namespace PharmacyManagementSystem.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<OrderDetail>>> GetOrderDetail()
         {
-          if (_context.OrderDetail == null)
-          {
-              return NotFound();
-          }
-            return await _context.OrderDetail.ToListAsync();
+            try
+            {
+
+                if (_context.OrderDetail == null)
+                {
+                    return NotFound();
+                }
+                return await _context.OrderDetail.ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
         // GET: api/OrderDetails/5
         [HttpGet("{id}")]
         public async Task<ActionResult<OrderDetail>> GetOrderDetail(int id)
         {
-          if (_context.OrderDetail == null)
-          {
-              return NotFound();
-          }
-            var orderDetail = await _context.OrderDetail.FindAsync(id);
-
-            if (orderDetail == null)
+            try
             {
-                return NotFound();
+
+                if (_context.OrderDetail == null)
+                {
+                    return NotFound();
+                }
+                var orderDetail = await _context.OrderDetail.FindAsync(id);
+
+                if (orderDetail == null)
+                {
+                    return NotFound();
+                }
+                return orderDetail;
             }
 
-            return orderDetail;
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
         // PUT: api/OrderDetails/5
@@ -55,30 +66,38 @@ namespace PharmacyManagementSystem.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutOrderDetail(int id, OrderDetail orderDetail)
         {
-            if (id != orderDetail.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(orderDetail).State = EntityState.Modified;
-
             try
             {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!OrderDetailExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
 
-            return NoContent();
+                if (id != orderDetail.Id)
+                {
+                    return BadRequest();
+                }
+
+                _context.Entry(orderDetail).State = EntityState.Modified;
+
+                try
+                {
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!OrderDetailExists(id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
         // POST: api/OrderDetails
@@ -86,34 +105,53 @@ namespace PharmacyManagementSystem.Controllers
         [HttpPost]
         public async Task<ActionResult<OrderDetail>> PostOrderDetail(OrderDetail orderDetail)
         {
-          if (_context.OrderDetail == null)
-          {
-              return Problem("Entity set 'PharmacyManagementSystemContext.OrderDetail'  is null.");
-          }
-            _context.OrderDetail.Add(orderDetail);
-            await _context.SaveChangesAsync();
+            try
+            {
 
-            return CreatedAtAction("GetOrderDetail", new { id = orderDetail.Id }, orderDetail);
+                if (_context.OrderDetail == null)
+                {
+                    return Problem("Entity set 'PharmacyManagementSystemContext.OrderDetail'  is null.");
+                }
+                _context.OrderDetail.Add(orderDetail);
+                await _context.SaveChangesAsync();
+
+                return CreatedAtAction("GetOrderDetail", new { id = orderDetail.Id }, orderDetail);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
+
+
+
 
         // DELETE: api/OrderDetails/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteOrderDetail(int id)
         {
-            if (_context.OrderDetail == null)
+            try
             {
-                return NotFound();
+
+                if (_context.OrderDetail == null)
+                {
+                    return NotFound();
+                }
+                var orderDetail = await _context.OrderDetail.FindAsync(id);
+                if (orderDetail == null)
+                {
+                    return NotFound();
+                }
+
+                _context.OrderDetail.Remove(orderDetail);
+                await _context.SaveChangesAsync();
+
+                return NoContent();
             }
-            var orderDetail = await _context.OrderDetail.FindAsync(id);
-            if (orderDetail == null)
+            catch (Exception ex)
             {
-                return NotFound();
+                throw new Exception(ex.Message);
             }
-
-            _context.OrderDetail.Remove(orderDetail);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
         }
 
         private bool OrderDetailExists(int id)

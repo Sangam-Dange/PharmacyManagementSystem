@@ -31,12 +31,23 @@ namespace PharmacyManagementSystem.Repository
             return drug;
         }
 
-        public async Task<bool> PutDrugById(int id, Drug drug)
+        public async Task<bool> PutDrugById(int id, CreateDrugDto drug)
         {
-            _context.Entry(drug).State = EntityState.Modified;
+            Drug? newDrug = await _context.Drug.FindAsync(id);
+            if (newDrug == null)
+            {
+                return false;
+            }
+            newDrug.batch_id = drug.batch_id;
+            newDrug.price = drug.price;
+            newDrug.quantity = drug.quantity;
+            newDrug.expiry_date = drug.expiry_date;
+            newDrug.drug_name = drug.drug_name;
+            newDrug.SupplierDetailId = drug.SupplierDetailId;
 
             try
             {
+
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)

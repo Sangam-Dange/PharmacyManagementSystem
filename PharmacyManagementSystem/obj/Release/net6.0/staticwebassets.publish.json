@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "P8JOfEcpvcokQk7kClw3pwvlcExUd4ceLeGARjNdBbI=",
+  "Source": "PharmacyManagementSystem",
+  "BasePath": "_content/PharmacyManagementSystem",
+  "Mode": "Default",
+  "ManifestType": "Publish",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}

@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\sugam\\OneDrive\\Desktop\\wb\\PharmacyManagementSystem\\PharmacyManagementSystem\\PharmacyManagementSystem.csproj": {}
+    "C:\\Users\\sugam\\OneDrive\\Desktop\\PMS\\PharmacyBackend\\PharmacyManagementSystem\\PharmacyManagementSystem.csproj": {}
   },
   "projects": {
-    "C:\\Users\\sugam\\OneDrive\\Desktop\\wb\\PharmacyManagementSystem\\PharmacyManagementSystem\\PharmacyManagementSystem.csproj": {
+    "C:\\Users\\sugam\\OneDrive\\Desktop\\PMS\\PharmacyBackend\\PharmacyManagementSystem\\PharmacyManagementSystem.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\sugam\\OneDrive\\Desktop\\wb\\PharmacyManagementSystem\\PharmacyManagementSystem\\PharmacyManagementSystem.csproj",
+        "projectUniqueName": "C:\\Users\\sugam\\OneDrive\\Desktop\\PMS\\PharmacyBackend\\PharmacyManagementSystem\\PharmacyManagementSystem.csproj",
         "projectName": "PharmacyManagementSystem",
-        "projectPath": "C:\\Users\\sugam\\OneDrive\\Desktop\\wb\\PharmacyManagementSystem\\PharmacyManagementSystem\\PharmacyManagementSystem.csproj",
+        "projectPath": "C:\\Users\\sugam\\OneDrive\\Desktop\\PMS\\PharmacyBackend\\PharmacyManagementSystem\\PharmacyManagementSystem.csproj",
         "packagesPath": "C:\\Users\\sugam\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\sugam\\OneDrive\\Desktop\\wb\\PharmacyManagementSystem\\PharmacyManagementSystem\\obj\\",
+        "outputPath": "C:\\Users\\sugam\\OneDrive\\Desktop\\PMS\\PharmacyBackend\\PharmacyManagementSystem\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\sugam\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -40,6 +40,10 @@
         "net6.0": {
           "targetAlias": "net6.0",
           "dependencies": {
+            "MailKit": {
+              "target": "Package",
+              "version": "[4.1.0, )"
+            },
             "Microsoft.AspNetCore.Authentication.JwtBearer": {
               "target": "Package",
               "version": "[6.0.16, )"
@@ -83,6 +87,14 @@
             "Microsoft.VisualStudio.Web.CodeGeneration.Design": {
               "target": "Package",
               "version": "[6.0.13, )"
+            },
+            "PdfSharpCore": {
+              "target": "Package",
+              "version": "[1.3.57, )"
+            },
+            "Polybioz.HtmlRenderer.PdfSharp.Core": {
+              "target": "Package",
+              "version": "[1.0.0, )"
             },
             "Swashbuckle.AspNetCore": {
               "target": "Package",

@@ -19,76 +19,99 @@ namespace PharmacyManagementSystem.Controllers
 
         // GET: api/Drugs
         // Access : Doctor , Admin 
-        [HttpGet
-            //, Authorize(Roles = "Admin,Doctor")
+        [HttpGet, Authorize(Roles = "Admin,Doctor")
             ]
         public async Task<ActionResult<IEnumerable<Drug>>> GetDrug()
         {
-            var drug = await IDrug.GetDrug();
-            if (drug == null)
+            try
             {
-                return NotFound();
+
+                var drug = await IDrug.GetDrug();
+                if (drug == null)
+                {
+                    return NotFound();
+                }
+                return drug;
             }
-            return drug;
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
         // GET: api/Drugs/5
         // Access : Doctor , Admin 
-        [HttpGet("{id}")
-            //, Authorize(Roles = "Admin,Doctor")
+        [HttpGet("{id}"), Authorize(Roles = "Admin,Doctor")
             ]
         public async Task<ActionResult<Drug>> GetDrug(int id)
         {
-            var drug = await IDrug.GetDrugById(id);
-            if (drug == null)
+            try
             {
-                return NotFound();
+
+                var drug = await IDrug.GetDrugById(id);
+                if (drug == null)
+                {
+                    return NotFound();
+                }
+                return Ok(drug);
             }
-            return Ok(drug);
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
         // PUT: api/Drugs/5
         // Access : Admin 
-        [HttpPut("{id}")
-            //, Authorize(Roles = "Admin")
+        [HttpPut("{id}"), Authorize(Roles = "Admin")
             ]
-        public async Task<IActionResult> PutDrug(int id, Drug drug)
+        public async Task<IActionResult> PutDrug(int id, CreateDrugDto drug)
         {
-            if (id != drug.drug_id)
+            try
             {
-                return BadRequest();
-            }
 
-            bool check = await IDrug.PutDrugById(id, drug);
-            if (check == false)
+                bool check = await IDrug.PutDrugById(id, drug);
+                if (check == false)
+                {
+                    return BadRequest();
+                }
+                return Ok();
+            }
+            catch (Exception ex)
             {
-                return BadRequest();
+                throw new Exception(ex.Message);
             }
-            return Ok();
-
         }
 
         // POST: api/Drugs
         // Access : Admin 
-        [HttpPost
-            //, Authorize(Roles = "Admin")
+        [HttpPost, Authorize(Roles = "Admin")
             ]
         public async Task<ActionResult<Drug>> PostDrug(CreateDrugDto drug)
         {
 
-            if (drug == null)
+            try
             {
-                return BadRequest();
+
+                if (drug == null)
+                {
+                    return BadRequest();
+                }
+
+                var newDrug = await IDrug.PostDrug(drug);
+
+                if (newDrug == null)
+                {
+                    return BadRequest();
+                }
+
+                return CreatedAtAction("GetDrug", new { id = newDrug.drug_id }, newDrug);
             }
 
-            var newDrug = await IDrug.PostDrug(drug);
-
-            if (newDrug == null)
+            catch (Exception ex)
             {
-                return BadRequest();
+                throw new Exception(ex.Message);
             }
-
-            return CreatedAtAction("GetDrug", new { id = newDrug.drug_id }, newDrug);
         }
 
         // DELETE: api/Drugs/5
@@ -96,17 +119,24 @@ namespace PharmacyManagementSystem.Controllers
         [HttpDelete("{id}"), Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteDrug(int id)
         {
-            bool check = await IDrug.DeleteDrugById(id);
-            if (check)
+            try
             {
-                return Ok();
+                bool check = await IDrug.DeleteDrugById(id);
+                if (check)
+                {
+                    return Ok();
+                }
+                return BadRequest();
+
             }
-            return BadRequest();
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
 
-        [HttpGet("GetDrugBySupplierId/{supplierId}")
-            //, Authorize(Roles = "Admin")
+        [HttpGet("GetDrugBySupplierId/{supplierId}"), Authorize(Roles = "Admin")
             ]
         public async Task<ActionResult<IEnumerable<Drug>>> GetDrugBySupplierId(int supplierId)
         {

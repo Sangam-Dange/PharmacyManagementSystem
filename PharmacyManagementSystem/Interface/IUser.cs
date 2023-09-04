@@ -12,6 +12,7 @@ namespace PharmacyManagementSystem.Interface
         Task<ActionResult<User>> GetUserById(int id);
         Task<bool> PutUser(int id, User user);
         Task<bool> ChangeUserRole(int id, ChangeRoleDto request);
+        Task<bool> UnAuthoizeUser(int id);
         Task<bool> DeleteUserById(int id);
 
     }

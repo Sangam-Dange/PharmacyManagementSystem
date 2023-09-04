@@ -67,21 +67,35 @@ namespace PharmacyManagementSystem.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("order_id"), 1L, 1);
 
+                    b.Property<int?>("AddressId")
+                        .HasColumnType("int");
+
                     b.Property<int>("UserId")
                         .HasColumnType("int");
+
+                    b.Property<DateTime>("order_date")
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("order_no")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("pickup_date")
+                    b.Property<DateTime?>("pickup_date")
                         .HasColumnType("datetime2");
 
                     b.Property<decimal>("total")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<decimal>("totalItems")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("userAddressAddressId")
+                        .HasColumnType("int");
+
                     b.HasKey("order_id");
 
                     b.HasIndex("UserId");
+
+                    b.HasIndex("userAddressAddressId");
 
                     b.ToTable("Order");
                 });
@@ -217,6 +231,49 @@ namespace PharmacyManagementSystem.Migrations
                     b.ToTable("User");
                 });
 
+            modelBuilder.Entity("PharmacyManagementSystem.Models.UserAddress", b =>
+                {
+                    b.Property<int>("AddressId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AddressId"), 1L, 1);
+
+                    b.Property<string>("City")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Country")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("PostalCode")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.Property<string>("State")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("StreetAddress")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("AddressId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserAddress");
+                });
+
             modelBuilder.Entity("PharmacyManagementSystem.Models.Drug", b =>
                 {
                     b.HasOne("PharmacyManagementSystem.Models.SupplierDetails", "SupplierDetail")
@@ -236,7 +293,15 @@ namespace PharmacyManagementSystem.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("PharmacyManagementSystem.Models.UserAddress", "userAddress")
+                        .WithMany()
+                        .HasForeignKey("userAddressAddressId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("user");
+
+                    b.Navigation("userAddress");
                 });
 
             modelBuilder.Entity("PharmacyManagementSystem.Models.OrderDetail", b =>
@@ -267,6 +332,17 @@ namespace PharmacyManagementSystem.Migrations
                         .IsRequired();
 
                     b.Navigation("order");
+                });
+
+            modelBuilder.Entity("PharmacyManagementSystem.Models.UserAddress", b =>
+                {
+                    b.HasOne("PharmacyManagementSystem.Models.User", "user")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("user");
                 });
 
             modelBuilder.Entity("PharmacyManagementSystem.Models.Drug", b =>

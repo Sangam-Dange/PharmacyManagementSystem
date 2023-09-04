@@ -26,13 +26,21 @@ namespace PharmacyManagementSystem.Controllers
 
         public async Task<ActionResult<IEnumerable<User>>> GetUsers()
         {
-            var user = await IUser.GetAllUsers();
-            if (user == null)
+            try
             {
-                return NotFound();
-            }
 
-            return user;
+                var user = await IUser.GetAllUsers();
+                if (user == null)
+                {
+                    return NotFound();
+                }
+
+                return user;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
         // GET: api/Users/GetAuthorizedUsers
@@ -41,13 +49,21 @@ namespace PharmacyManagementSystem.Controllers
 
         public async Task<ActionResult<IEnumerable<User>>> GetAuthorizedUsers()
         {
-            var user = await IUser.GetAuthorizedUsers();
-            if (user == null)
+            try
             {
-                return NotFound();
-            }
 
-            return user;
+                var user = await IUser.GetAuthorizedUsers();
+                if (user == null)
+                {
+                    return NotFound();
+                }
+
+                return user;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
         // GET: api/Users/GetUnAuthorizedUsers
@@ -56,13 +72,21 @@ namespace PharmacyManagementSystem.Controllers
 
         public async Task<ActionResult<IEnumerable<User>>> GetUnAuthorizedUsers()
         {
-            var user = await IUser.GetUnAuthorizedUsers();
-            if (user == null)
+            try
             {
-                return NotFound();
-            }
+                var user = await IUser.GetUnAuthorizedUsers();
+                if (user == null)
+                {
+                    return NotFound();
+                }
 
-            return user;
+                return user;
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
 
@@ -71,18 +95,26 @@ namespace PharmacyManagementSystem.Controllers
         [HttpGet("{id}"), Authorize(Roles = "SuperAdmin,Admin,Doctor")]
         public async Task<ActionResult<User>> GetUsers(int id)
         {
-            if (id <= 0)
+            try
             {
-                return BadRequest();
-            }
-            var user = await IUser.GetUserById(id);
 
-            if (user == null)
+                if (id <= 0)
+                {
+                    return BadRequest();
+                }
+                var user = await IUser.GetUserById(id);
+
+                if (user == null)
+                {
+                    return NotFound();
+                }
+
+                return user;
+            }
+            catch (Exception ex)
             {
-                return NotFound();
+                throw new Exception(ex.Message);
             }
-
-            return user;
         }
 
         ////// put: api/users/5
@@ -90,13 +122,21 @@ namespace PharmacyManagementSystem.Controllers
         [HttpPut("{id}"), Authorize(Roles = "Admin,Doctor")]
         public async Task<IActionResult> PutUser(int id, User user)
         {
-            bool check = await IUser.PutUser(id, user);
-            if (check == false)
+            try
             {
-                return BadRequest();
-            }
 
-            return Ok();
+                bool check = await IUser.PutUser(id, user);
+                if (check == false)
+                {
+                    return BadRequest();
+                }
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
         // PUT: api/Users/5
@@ -104,15 +144,44 @@ namespace PharmacyManagementSystem.Controllers
         [HttpPut("ChangeUserRole/{id}"), Authorize(Roles = "SuperAdmin")]
         public async Task<IActionResult> ChangeUserRole(int id, ChangeRoleDto request)
         {
-            bool check = await IUser.ChangeUserRole(id, request);
-            if (check == false)
+            try
             {
-                return BadRequest();
-            }
 
-            return Ok();
+                bool check = await IUser.ChangeUserRole(id, request);
+                if (check == false)
+                {
+                    return BadRequest();
+                }
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
+        // PUT: api/Users/5
+        // Access : SuperAdmin
+        [HttpGet("UnAuthoizeUser/{id}"), Authorize(Roles = "SuperAdmin")]
+        public async Task<IActionResult> UnAuthoizeUser(int id)
+        {
+            try
+            {
+
+                bool check = await IUser.UnAuthoizeUser(id);
+                if (check == false)
+                {
+                    return BadRequest();
+                }
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
 
 
 
@@ -120,12 +189,20 @@ namespace PharmacyManagementSystem.Controllers
         [HttpDelete("{id}"), Authorize(Roles = "SuperAdmin")]
         public async Task<IActionResult> DeleteUser(int id)
         {
-            bool res = await IUser.DeleteUserById(id);
-            if (res == false)
+            try
             {
-                return BadRequest();
+
+                bool res = await IUser.DeleteUserById(id);
+                if (res == false)
+                {
+                    return BadRequest();
+                }
+                return Ok();
             }
-            return Ok();
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
     }

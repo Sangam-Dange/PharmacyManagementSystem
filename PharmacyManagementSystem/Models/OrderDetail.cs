@@ -12,7 +12,6 @@ namespace PharmacyManagementSystem.Models
         public Order order { get; set; }
         public int OrderId { get; set; }
 
-        [JsonIgnore]
         public Drug drug { get; set; }
         public int DrugId { get; set; }
 

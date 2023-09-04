@@ -89,6 +89,27 @@ namespace PharmacyManagementSystem.Repository
             return true;
         }
 
+        public async Task<bool> UnAuthoizeUser(int id)
+        {
+            var user = await _context.User.FindAsync(id);
+            if (user == null)
+            {
+                return false;
+            }
+
+            user.isAdmin = null;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                return false;
+            }
+
+            return true;
+        }
         public async Task<bool> DeleteUserById(int id)
         {
             if (_context.User == null)

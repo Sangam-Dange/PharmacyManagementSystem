@@ -8,7 +8,7 @@ namespace PharmacyManagementSystem.Interface
     {
         Task<ActionResult<IEnumerable<Drug>>> GetDrug();
         Task<ActionResult<Drug>> GetDrugById(int id);
-        Task<bool> PutDrugById(int id, Drug drug);
+        Task<bool> PutDrugById(int id, CreateDrugDto drug);
         Task<Drug> PostDrug(CreateDrugDto drug);
         Task<ActionResult<IEnumerable<Drug>>> GetDrugBySupplierId(int supplierId);
         Task<bool> DeleteDrugById(int id);

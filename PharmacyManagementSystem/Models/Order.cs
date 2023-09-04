@@ -16,17 +16,19 @@ namespace PharmacyManagementSystem.Models
         [Required]
         public decimal total { get; set; }
 
+        [Required]
+        public decimal totalItems { get; set; }
+
         //-----------------------------------------------------------------
 
         public User user { get; set; }
         public int UserId { get; set; }
 
-
+        public DateTime order_date { get; set; }
         //-----------------------------------------------------------------
-        public DateTime pickup_date { get; set; }
+        public DateTime? pickup_date { get; set; }
         [JsonIgnore]
         public List<OrderDetail> OrderDetails { get; set; }
-
 
         public Order() { }
 

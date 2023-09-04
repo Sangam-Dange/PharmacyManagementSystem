@@ -1,10 +1,13 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using PharmacyManagementSystem.Data;
+using PharmacyManagementSystem.Dtos.EmailDto;
 using PharmacyManagementSystem.Interface;
 using PharmacyManagementSystem.Repository;
+using PharmacyManagementSystem.Services.EmailService;
 using Swashbuckle.AspNetCore.Filters;
 using System.Text;
 
@@ -16,7 +19,10 @@ builder.Services.AddDbContext<PharmacyManagementSystemContext>(options =>
 builder.Services.AddScoped<IUser, UserRepository>();
 builder.Services.AddScoped<IDrug, DrugRepository>();
 builder.Services.AddScoped<ISupplier, SupplierRepository>();
-
+builder.Services.AddScoped<IOrder, OrderRepository>();
+builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
+builder.Services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 // adding auth in swagger
 builder.Services.AddSwaggerGen(options =>
 {
